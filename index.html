@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>من جمصة إلى القاهرة: محاكي التاكسي أونلاين</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- استدعاء محرك الـ 3D أونلاين بأمان كامل -->
+    <script src="https://cloudflare.com"></script>
+</head>
+<body>
+
+    <!-- شاشة البداية الرئيسية -->
+    <div id="main-menu" class="menu-overlay">
+        <div class="menu-content">
+            <h1 class="game-title">جمصة إلى القاهرة: محاكي التاكسي</h1>
+            <p class="game-subtitle">محاكاة واقعية وحياة كاملة بسيارة هيونداي إلنترا</p>
+            
+            <div class="menu-buttons">
+                <button class="btn" onclick="startGame()">ابدأ اللعب أونلاين</button>
+                <button class="btn locked">معرض السيارات (قريباً)</button>
+                <button class="btn locked">الإعدادات</button>
+            </div>
+            <div class="credits">تطوير أشرف محمد أحمد يونس</div>
+        </div>
+    </div>
+
+    <!-- شاشة اللعب والعدادات -->
+    <div id="game-hud" class="hud-overlay hidden">
+        
+        <!-- يافطة أسماء الشوارع والكمائن والرادار -->
+        <div id="zone-notification" class="notification hidden">
+            <span id="zone-text">طريق جمصة الدولي</span>
+        </div>
+
+        <!-- أشرطة الاحتياجات الحيوية للسواق -->
+        <div class="vitals-container">
+            <div class="vital-bar-wrapper">
+                <label>🍔 الجوع:</label>
+                <div class="progress-bar"><div id="hunger-bar" class="progress fill-green" style="width: 100%;"></div></div>
+            </div>
+            <div class="vital-bar-wrapper">
+                <label>💧 العطش:</label>
+                <div class="progress-bar"><div id="thirst-bar" class="progress fill-blue" style="width: 100%;"></div></div>
+            </div>
+            <div class="vital-bar-wrapper">
+                <label>⚡ الطاقة:</label>
+                <div class="progress-bar"><div id="energy-bar" class="progress fill-yellow" style="width: 100%;"></div></div>
+            </div>
+        </div>
+
+        <!-- محفظة الفلوس وعداد السرعة الحقيقي -->
+        <div class="stats-container">
+            <div id="wallet-display">💰 الفلوس: 150 جنيه</div>
+            <div id="speedo-display">⚡ السرعة: <span id="current-speed">0</span> كم/س</div>
+            <div style="font-size: 0.8rem; color: #aaa; margin-top: 5px; text-align: center;">التحكم: الأسهم ⬆️⬇️⬅️➡️</div>
+        </div>
+
+        <!-- حاوية الـ 3D الفعلي الأونلاين -->
+        <div id="canvas-container"></div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

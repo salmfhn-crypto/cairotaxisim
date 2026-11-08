@@ -1,0 +1,188 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0b0c10;
+}
+
+/* تنسيق شاشة البداية */
+.menu-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.9)), url('https://unsplash.com') center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    transition: opacity 0.5s ease;
+}
+
+.menu-content {
+    text-align: center;
+    color: #fff;
+    direction: rtl;
+}
+
+.game-title {
+    font-size: 3.5rem;
+    color: #f5b041;
+    text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+    margin-bottom: 10px;
+}
+
+.game-subtitle {
+    font-size: 1.2rem;
+    color: #c5a059;
+    margin-bottom: 40px;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+    margin: 0 auto;
+}
+
+.btn {
+    background-color: #f5b041;
+    color: #111;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: #f8c471;
+    transform: scale(1.05);
+}
+
+.btn.locked {
+    background-color: #555;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.btn.locked:hover {
+    transform: none;
+}
+
+.credits {
+    margin-top: 50px;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* تنسيق شاشة اللعب والعدادات */
+.hud-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* يافطة الإشعارات (الشوارع والرادارات) */
+.notification {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20, 20, 20, 0.95);
+    border: 2px solid #f5b041;
+    color: #fff;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    pointer-events: auto;
+    direction: rtl;
+}
+
+/* شريط الجوع والعطش والطاقة */
+.vitals-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.85);
+    padding: 15px;
+    border-radius: 12px;
+    width: 250px;
+    color: #fff;
+    direction: rtl;
+    border-left: 4px solid #f5b041;
+}
+
+.vital-bar-wrapper {
+    margin-bottom: 10px;
+}
+
+.vital-bar-wrapper label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background-color: #333;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    width: 100%;
+    transition: width 0.3s ease;
+}
+
+.fill-green { background-color: #2ecc71; }
+.fill-blue { background-color: #3498db; }
+.fill-yellow { background-color: #f1c40f; }
+
+/* عداد الفلوس والسرعة فوق */
+.stats-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.85);
+    padding: 12px 20px;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: bold;
+    text-align: right;
+    direction: rtl;
+    font-size: 1.1rem;
+}
+
+#speedo-display {
+    margin-top: 5px;
+    color: #f5b041;
+}
+
+#canvas-container {
+    width: 100%;
+    height: 100%;
+    background-color: #1c2833;
+    z-index: 1;
+}
