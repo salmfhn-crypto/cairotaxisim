@@ -3,64 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>من جمصة إلى القاهرة: محاكي التاكسي أونلاين</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- استدعاء المحرك بشكل مضمون -->
+    <title>جمصة إلى القاهرة: محاكي التاكسي الواقعي</title>
     <script src="https://cloudflare.com"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; user-select: none; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #0b0c10; color: #fff; }
+        
+        /* شاشة البداية الاحترافية المستوحاة من الصورة */
+        .menu-overlay { 
+            position: absolute; width: 100%; height: 100%; 
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85)), url('https://unsplash.com') center/cover;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; z-index: 10; padding: 40px 20px; overflow-y: auto;
+        }
+        
+        .header-banner { text-align: center; margin-bottom: 40px; direction: rtl; }
+        .game-title { font-size: 3.5rem; color: #f1c40f; text-shadow: 0 0 20px rgba(241,196,15,0.6); font-weight: 900; }
+        .game-subtitle { font-size: 1.5rem; color: #fff; letter-spacing: 2px; margin-top: 5px; font-weight: bold; }
+        
+        /* تقسيم أطوار اللعب كروت فخمة */
+        .modes-grid { 
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; width: 100%; max-width: 900px; direction: rtl;
+        }
+        
+        @media (max-width: 768px) { .modes-grid { grid-template-columns: 1fr; } }
+        
+        .mode-card { 
+            background: rgba(20, 24, 30, 0.85); border: 2px solid #2c3e50; border-radius: 15px; padding: 30px; 
+            text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .mode-card:hover { 
+            border-color: #f1c40f; transform: translateY(-5px); box-shadow: 0 15px 35px rgba(241,196,15,0.2);
+        }
+        .mode-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .mode-name-en { font-size: 1.3rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
+        .mode-name-ar { font-size: 1.6rem; font-weight: bold; color: #f1c40f; margin: 5px 0; }
+        .mode-desc { font-size: 0.95rem; color: #bdc3c7; line-height: 1.5; }
+
+        /* شاشة اللعب والعدادات */
+        .hud-overlay { position: absolute; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+        .hidden { display: none !important; }
+        .notification { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); background: rgba(20, 20, 20, 0.95); border: 2px solid #f1c40f; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 1.4rem; font-weight: bold; direction: rtl; box-shadow: 0 0 20px rgba(241,196,15,0.3); }
+        
+        .vitals-container { position: absolute; bottom: 20px; right: 20px; background: rgba(10,12,16,0.9); padding: 15px; border-radius: 12px; width: 240px; border-left: 4px solid #f1c40f; direction: rtl; }
+        .vital-bar-wrapper { margin-bottom: 10px; }
+        .progress-bar { width: 100%; height: 10px; background-color: #222; border-radius: 5px; overflow: hidden; }
+        .progress { height: 100%; width: 100%; transition: width 0.3s; }
+        .fill-green { background-color: #2ecc71; }
+        .fill-blue { background-color: #3498db; }
+        .fill-yellow { background-color: #f1c40f; }
+        
+        .stats-container { position: absolute; top: 20px; right: 20px; background: rgba(10,12,16,0.9); padding: 15px 25px; border-radius: 12px; font-weight: bold; direction: rtl; border-right: 4px solid #f1c40f; }
+        #canvas-container { width: 100%; height: 100%; z-index: 1; }
+    </style>
 </head>
 <body>
 
-    <!-- شاشة البداية الرئيسية -->
+    <!-- شاشة اختيار الأطوار الاحترافية المتطابقة مع فكرتك -->
     <div id="main-menu" class="menu-overlay">
-        <div class="menu-content">
-            <h1 class="game-title">جمصة إلى القاهرة: محاكي التاكسي</h1>
-            <p class="game-subtitle">محاكاة واقعية وحياة كاملة بسيارة هيونداي إلنترا</p>
-            
-            <div class="menu-buttons">
-                <button class="btn" onclick="startGame()">ابدأ اللعب أونلاين</button>
-                <button class="btn locked">معرض السيارات (قريباً)</button>
-                <button class="btn locked">الإعدادات</button>
+        <div class="header-banner">
+            <h1 class="game-title">محاكي تاكسي مصر</h1>
+            <p class="game-subtitle">FROM GAMASA TO CAIRO</p>
+        </div>
+        
+        <div class="modes-grid">
+            <div class="mode-card" onclick="startGame('free')">
+                <div class="mode-icon">🌐</div>
+                <div class="mode-name-en">FREE ROAM</div>
+                <div class="mode-name-ar">عالم حر</div>
+                <div class="mode-desc">تاكسي هيونداي إلنترا.. اتجول بحرية من جمصة للمنصورة على الطريق الدولي وعيش حياة السواق الحقيقية.</div>
             </div>
-            <div class="credits">تطوير أشرف محمد أحمد يونس</div>
+            
+            <div class="mode-card" onclick="startGame('checkpoint')">
+                <div class="mode-icon">👮</div>
+                <div class="mode-name-en">CHECKPOINT</div>
+                <div class="mode-name-ar">اللجنة ورادارات السفر</div>
+                <div class="mode-desc">اضبط سرعتك عشان الرادارات، وجهز رخصتك عشان أكمنة طريق السفر الدولي ومداخل القاهرة والمطار.</div>
+            </div>
+
+            <div class="mode-card" onclick="startGame('racing')">
+                <div class="mode-icon">🏁</div>
+                <div class="mode-name-en">RACING</div>
+                <div class="mode-name-ar">سباق الطريق</div>
+                <div class="mode-desc">تحديات وسرعة جنونية على خط السير السريع لتوصل زباينك في أسرع وقت وتكسب فلوس أعلى.</div>
+            </div>
+
+            <div class="mode-card" onclick="startGame('life')">
+                <div class="mode-icon">🍔</div>
+                <div class="mode-name-en">LIFE SIMULATOR</div>
+                <div class="mode-name-ar">محاكي الحياة الواقعية</div>
+                <div class="mode-desc">شغل موبايلك، كل واشرب ونام في الاستراحات، واجمع الفلوس عشان تشتري تاكسيات جديدة من المعرض.</div>
+            </div>
         </div>
     </div>
 
-    <!-- شاشة اللعب والعدادات -->
+    <!-- شاشة اللعب الفعلي -->
     <div id="game-hud" class="hud-overlay hidden">
+        <div id="zone-notification" class="notification hidden"><span id="zone-text">طريق جمصة الدولي</span></div>
         
-        <!-- يافطة أسماء الشوارع الذكية -->
-        <div id="zone-notification" class="notification hidden">
-            <span id="zone-text">طريق جمصة الدولي</span>
-        </div>
-
-        <!-- أشرطة الاحتياجات الحيوية للسواق -->
         <div class="vitals-container">
-            <div class="vital-bar-wrapper">
-                <label>🍔 الجوع:</label>
-                <div class="progress-bar"><div id="hunger-bar" class="progress fill-green" style="width: 100%;"></div></div>
-            </div>
-            <div class="vital-bar-wrapper">
-                <label>💧 العطش:</label>
-                <div class="progress-bar"><div id="thirst-bar" class="progress fill-blue" style="width: 100%;"></div></div>
-            </div>
-            <div class="vital-bar-wrapper">
-                <label>⚡ الطاقة:</label>
-                <div class="progress-bar"><div id="energy-bar" class="progress fill-yellow" style="width: 100%;"></div></div>
-            </div>
+            <div class="vital-bar-wrapper"><label>🍔 الجوع:</label><div class="progress-bar"><div id="hunger-bar" class="progress fill-green"></div></div></div>
+            <div class="vital-bar-wrapper"><label>💧 العطش:</label><div class="progress-bar"><div id="thirst-bar" class="progress fill-blue"></div></div></div>
+            <div class="vital-bar-wrapper"><label>⚡ الطاقة:</label><div class="progress-bar"><div id="energy-bar" class="progress fill-yellow"></div></div></div>
         </div>
-
-        <!-- محفظة الفلوس وعداد السرعة الحقيقي -->
+        
         <div class="stats-container">
             <div id="wallet-display">💰 الفلوس: 150 جنيه</div>
-            <div id="speedo-display">⚡ السرعة: <span id="current-speed">0</span> كم/س</div>
-            <div style="font-size: 0.8rem; color: #aaa; margin-top: 5px; text-align: center;">التحكم: الأسهم ⬆️⬇️⬅️➡️</div>
+            <div style="color:#f1c40f; margin-top:5px;">⚡ السرعة: <span id="current-speed">0</span> كم/س</div>
         </div>
-
-        <!-- حاوية الـ 3D الفعلي -->
+        
         <div id="canvas-container"></div>
     </div>
 
-    <!-- الربط الصحيح الأكيد لملف الحركة -->
-    <script src="game.js"></script>
-</body>
-</html>
+    <script>
+        let stats = { money: 150, speed: 0, hunger: 100, thirst: 100, energy: 100 };
+        let scene, camera, renderer, car, road;
+        let keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+        let carPhysics = { velocity: 0, maxSpeed: 3.5, acceleration: 0.05, deceleration: 0.02, braking: 0.1, angle: 0, turnSpeed: 0.035 };
+
+        function startGame(mode) {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('game-hud').classList.remove('hidden');
+            init3DWorld();
+            
+            window.addEventListener('keydown', (e) => { if(e.key in keys) keys[e.key] = true; });
+            window.addEventListener('keyup', (e) => { if(e.key in keys) keys[e.key] = false; });
+            
+            animate();
+            
+            if(mode === 'free') showZone("📍 دخلت الطور الحُر: شوارع مدينة جمصة");
+            if(mode === 'checkpoint') showZone("👮 طور اللجنة: انتبه لرادارات السرعة على الطريق السريع");
+            if(mode === 'racing') showZone("🏁 طور السباق: وصل الزبون قبل انتهاء الوقت!");
+            if(mode === 'life') showZone("🍔 طور المحاكاة: راقب مؤشرات الجوع والعطش والموبايل");
+        }
+
+        function init3DWorld() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x131a22); // جو الليل المصري الممتع
+            
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            const light = new THREE.DirectionalLight(0xffffff, 1.8);
+            light.position.set(10, 30, 20).normalize();
+            scene.add(light);
+            scene.add(new THREE.AmbientLight(0x555555));
+
+            // طريق أسفلت فخم وواسع بـ 3 حارات
+            const roadGeo = new THREE.PlaneGeometry(35, 10000);
+            const roadMat = new THREE.MeshStandardMaterial({ color: 0x1c2833, roughness: 0.6 });
+            road = new THREE.Mesh(roadGeo, roadMat);
+            road.rotation.x = -Math.PI / 2;
+            scene.add(road);
+
+            // تجميع جسم الهيونداي إلنترا التاكسي بالأبعاد الانسيابية
+            car = new THREE.Group();
+            
+            // جسم السيارة الانسيابي (أصفر تاكسي)
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf1c40f, metalness: 0.6, roughness: 0.2 });
+            const body = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.5, 4.3), bodyMat);
+            body.position.y = 0.35;
+            car.add(body);
+
+            // خطوط الرفارف الجانبية المصريه (أسود)
+            const stripes = new THREE.Mesh(new THREE.BoxGeometry(1.72, 0.15, 4.32), new THREE.MeshStandardMaterial({ color: 0x111111 }));
+            stripes.position.y = 0.35;
+            car.add(stripes);
+
+            // صالون العربية والزجاج المائل الفخم للإلنترا
